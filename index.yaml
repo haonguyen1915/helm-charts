@@ -1,13 +1,15 @@
 apiVersion: v1
 entries:
-  my-app:
-  - apiVersion: v1
-    appVersion: "1.0"
-    created: 2018-03-30T14:00:56.531328411Z
+  polylite:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2023-10-26T16:36:44.936671+07:00"
     description: A Helm chart for Kubernetes
-    digest: 29089aabaa8aa08a03215098b1982ad38f6cd9de1c9b25ff842003a53cad881d
-    name: my-app
+    digest: e9d419ed6ca7600d0a1f0e580041751cb9ed77780c101458235440620e7fa7f1
+    name: polylite
+    type: application
     urls:
-    - https://gree-gorey.github.io/helm-example/my-app-0.1.0.tgz
-    version: 0.1.0
-generated: 2018-03-30T14:00:56.530846921Z
+    - https://haonguyen1915.github.io/helm-charts/polylite-1.1.0.tgz
+    version: 1.1.0
+generated: "2023-10-26T16:36:44.92837+07:00"
+
