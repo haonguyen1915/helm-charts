@@ -1,9 +1,36 @@
 apiVersion: v1
 entries:
+  passbolt:
+  - apiVersion: v2
+    appVersion: 4.4.0-1-ce
+    created: "2023-12-01T20:12:11.545369+07:00"
+    dependencies:
+    - name: passbolt-library
+      repository: https://download.passbolt.com/charts/passbolt-library
+      version: 0.2.7
+    - condition: redisDependencyEnabled
+      name: redis
+      repository: https://charts.bitnami.com/bitnami
+      version: 17.15.2
+    - condition: mariadbDependencyEnabled
+      name: mariadb
+      repository: https://charts.bitnami.com/bitnami
+      version: 11.5.7
+    - condition: postgresqlDependencyEnabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 13.2.3
+    description: Helm chart for passbolt PRO and CE
+    digest: 428c6de95d814d3b8d0abfeaa6478a20123d6ce177628c9c962f05695a198013
+    name: passbolt
+    type: application
+    urls:
+    - https://haonguyen1915.github.io/helm-charts/passbolt-0.7.0.tgz
+    version: 0.7.0
   polylite:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2023-10-26T20:33:38.811831+07:00"
+    created: "2023-12-01T20:12:11.547381+07:00"
     description: A Helm chart for Kubernetes
     digest: 62c561cec787178cb6acefb273d2ce5b99cdd29adbaa6610015a974758413e41
     name: polylite
@@ -11,4 +38,4 @@ entries:
     urls:
     - https://haonguyen1915.github.io/helm-charts/polylite-1.1.0.tgz
     version: 1.1.0
-generated: "2023-10-26T20:33:38.808135+07:00"
+generated: "2023-12-01T20:12:11.521881+07:00"
