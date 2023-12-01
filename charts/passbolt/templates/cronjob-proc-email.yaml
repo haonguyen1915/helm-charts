@@ -3,7 +3,7 @@
 {{- $action := "proc-email" -}}
 {{- $Name := include "passbolt-library.fullname" . -}}
 {{- $fullName := printf "%s-%s-%s" $Name $type $action -}}
-apiVersion: batch/v1
+apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
   name: {{ $fullName }}
@@ -23,7 +23,6 @@ spec:
              {{- toYaml . | nindent 12 }}
            {{- end }}
         spec:
-          {{- include "passbolt.pullSecrets" ( dict "images" (list .Values.imagePullSecrets ) "global" .Values.global) | nindent 10 }}
           serviceAccountName: {{ $Name }}-sa-common
           restartPolicy: OnFailure
           securityContext:
@@ -31,8 +30,7 @@ spec:
             fsGroup: 33
           containers:
             - name: {{ $fullName }}
-              image: {{ include "passbolt.image" (dict "imageRoot" .Values.app.image "global" .Values.global) }}
-              imagePullPolicy: {{ .Values.app.image.pullPolicy }}
+          {{ include "passbolt-library.container-repositories.tpl" (dict "Values" . "Image" .Values.app.image) | nindent 14 }}
               command:
                 - "/bin/bash"
               args:
@@ -42,12 +40,6 @@ spec:
                   echo "Sending emails" \
                   && bin/cron \
                   && touch /tmp/pod/success
-              env:
-                - name: DATASOURCES_DEFAULT_HOST
-                  value: {{ include "passbolt.databaseServiceName" . }}
-                {{- with .Values.passboltEnv.extraEnv }}
-                {{- toYaml . | nindent 16 }}
-                {{- end }}
               envFrom:
                 - configMapRef:
                     name: {{ $Name }}-cm-env
@@ -59,13 +51,12 @@ spec:
               volumeMounts:
                 - name: {{ $Name }}-vol-success
                   mountPath: /tmp/pod
-                - name: {{ include "passbolt.gpg.secretName" ( dict "name" $Name "Values" $.Values ) }}
+                - name: {{ $Name }}-sec-gpg
                   mountPath: {{ .Values.gpgPath }}
                   readOnly: true
             {{- if .Values.app.cache.redis.sentinelProxy.enabled }}
             - name: {{ $fullName }}-redisproxy
-              image: {{ include "passbolt.image" (dict "imageRoot" .Values.app.cache.redis.sentinelProxy.image "global" .Values.global) }}
-              imagePullPolicy: {{ .Values.app.cache.redis.sentinelProxy.pullPolicy }}
+              {{ include "passbolt-library.container-repositories.tpl" (dict "Values" . "Image" .Values.app.cache.redis.sentinelProxy.image) | nindent 14 }}
               command:
                 - "/bin/bash"
               args:
@@ -90,9 +81,9 @@ spec:
             - name: {{ $fullName }}-sec-gcs
               secret:
                 secretName: {{ $Name }}-sec-gcs
-            - name: {{ include "passbolt.gpg.secretName" ( dict "name" $Name "Values" $.Values ) }}
+            - name: {{ $Name }}-sec-gpg
               secret:
-                secretName: {{ include "passbolt.gpg.secretName" ( dict "name" $Name "Values" $.Values ) }}
+                secretName: {{ $Name }}-sec-gpg
             {{- if .Values.app.cache.redis.sentinelProxy.enabled }}
             - name: {{ $fullName }}-sec-redis-proxy
               secret:

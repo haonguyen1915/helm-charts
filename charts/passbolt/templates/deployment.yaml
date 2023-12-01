@@ -25,9 +25,7 @@ spec:
         {{- end }}
       annotations:
         checksum/sec-env: {{ include (print $.Template.BasePath "/secret-env.yaml") . | sha256sum }}
-        {{ if ( not $.Values.gpgExistingSecret ) }}
         checksum/sec-gpg: {{ include (print $.Template.BasePath "/secret-gpg.yaml") . | sha256sum }}
-        {{- end }}
         checksum/cm-env: {{ include (print $.Template.BasePath "/configmap-env.yaml") . | sha256sum }}
         {{- if .Values.passboltEnv.plain.PASSBOLT_PLUGINS_JWT_AUTHENTICATION_ENABLED }}
         checksum/sec-jwt: {{ include (print $.Template.BasePath "/secret-jwt.yaml") . | sha256sum }}
@@ -36,22 +34,21 @@ spec:
         checksum/sec-redis-proxy: {{ include (print $.Template.BasePath "/secret-redis-proxy.yaml") . | sha256sum }}
         {{- end }}
     spec:
-      {{- include "passbolt.pullSecrets" ( dict "images" (list .Values.imagePullSecrets ) "global" .Values.global) | nindent 6 }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       serviceAccountName: {{ $Name }}-sa-common
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       initContainers:
-        {{- if .Values.app.databaseInitContainer.enabled }}
         - name: {{ $fullName }}-init
-          {{ include "passbolt.initImage" . | nindent 10 }}
+          {{ include "passbolt-library.container-repositories.tpl" (dict "Values" . "Image" .Values.app.initImage) | nindent 10 }}
           command:
             - "/bin/bash"
           args:
             - "-c"
             - |
-              set -e
-              client="{{- include "passbolt.databaseClient" . }}"
-              {{- if or ( eq .Values.app.database.kind "mysql" ) ( eq .Values.app.database.kind "mariadb" ) }}
               cat <<-EOF > /tmp/defaultsfile.cnf
               [client]
               user=${DATASOURCES_DEFAULT_USERNAME}
@@ -60,31 +57,10 @@ spec:
               connect-timeout=2
               EOF
               userhost="%"
-              client="{{- include "passbolt.databaseClient" . }}"
-              while ! ${client} --defaults-file=/tmp/defaultsfile.cnf -e "SELECT 1" > /dev/null 2>&1; do
+              while ! {{ .Values.app.initImage.client }} --defaults-file=/tmp/defaultsfile.cnf -e "SELECT 1" > /dev/null 2>&1; do
                 echo "Waiting for database connection..."
                 sleep 2
               done
-              {{- end -}}
-              {{ if eq .Values.app.database.kind "postgresql" }}
-              apt update
-              apt install -y postgresql-client
-              cat <<-EOF > /tmp/.pgpass
-              ${DATASOURCES_DEFAULT_HOST}:5432:*:${DATASOURCES_DEFAULT_USERNAME}:${DATASOURCES_DEFAULT_PASSWORD}
-              EOF
-              chmod 600 /tmp/.pgpass
-              export PGPASSFILE='/tmp/.pgpass'
-              while ! ${client} -h ${DATASOURCES_DEFAULT_HOST} ; do
-                echo "Waiting for postgresql database connection..."
-                sleep 2
-              done
-              {{- end }}
-          env:
-            - name: DATASOURCES_DEFAULT_HOST
-              value: {{ include "passbolt.databaseServiceName" . }}
-            {{- with .Values.passboltEnv.extraEnv }}
-            {{- toYaml . | nindent 12 }}
-            {{- end }}
           envFrom:
             - configMapRef:
                 name: {{ $Name }}-cm-env
@@ -93,7 +69,6 @@ spec:
             {{- with .Values.passboltEnv.extraEnvFrom }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
-        {{- end }}
       containers:
         - name: {{ $fullName }}
           command:
@@ -104,8 +79,7 @@ spec:
               set -e
               > /etc/supervisor/conf.d/cron.conf
               /docker-entrypoint.sh
-          image: {{ include "passbolt.image" (dict "imageRoot" .Values.app.image "global" .Values.global) }}
-          imagePullPolicy: {{ .Values.app.image.pullPolicy }}
+          {{ include "passbolt-library.container-repositories.tpl" (dict "Values" . "Image" .Values.app.image) | nindent 10 }}
           ports:
           - name: https
             containerPort: {{ .Values.service.targetPort }}
@@ -117,12 +91,6 @@ spec:
             {{- toYaml .Values.livenessProbe | nindent 12 }}
           readinessProbe:
             {{- toYaml .Values.readinessProbe | nindent 12 }}
-          env:
-            - name: DATASOURCES_DEFAULT_HOST
-              value: {{ include "passbolt.databaseServiceName" . }}
-            {{- with .Values.passboltEnv.extraEnv }}
-            {{- toYaml . | nindent 12 }}
-            {{- end }}
           envFrom:
             - configMapRef:
                 name: {{ $Name }}-cm-env
@@ -141,7 +109,7 @@ spec:
             - mountPath: /etc/ssl/certs/passbolt
               name: {{ $fullName }}-sec-tls
               readOnly: true
-            - name: {{ include "passbolt.gpg.secretName" ( dict "name" $Name "Values" $.Values ) }}
+            - name: {{ $fullName }}-sec-gpg
               mountPath: {{ .Values.gpgPath }}
               readOnly: true
             {{- if .Values.subscriptionKey }}
@@ -162,8 +130,7 @@ spec:
             {{- toYaml .Values.app.resources | nindent 12 }}
         {{- if .Values.app.cache.redis.sentinelProxy.enabled }}
         - name: {{ $fullName }}-redisproxy
-          image: {{ include "passbolt.image" (dict "imageRoot" .Values.app.cache.redis.sentinelProxy.image "global" .Values.global) }}
-          imagePullPolicy: {{ .Values.app.cache.redis.sentinelProxy.pullPolicy }}
+          {{ include "passbolt-library.container-repositories.tpl" (dict "Values" . "Image" .Values.app.cache.redis.sentinelProxy.image) | nindent 10 }}
           volumeMounts:
             - mountPath: "/usr/local/etc/haproxy/haproxy.cfg"
               subPath: haproxy.cfg
@@ -187,10 +154,10 @@ spec:
       volumes:
         - name: {{ $fullName }}-sec-tls
           secret:
-            secretName: {{ include "passbolt.container.tls.secretName" (dict "name" $Name "ingressTLS" .Values.ingress.tls "globalTLS" $.Values.tls ) }}
-        - name: {{ include "passbolt.gpg.secretName" ( dict "name" $Name "Values" $.Values ) }}
+            secretName: {{ $Name }}-sec-tls
+        - name: {{ $fullName }}-sec-gpg
           secret:
-            secretName: {{ include "passbolt.gpg.secretName" ( dict "name" $Name "Values" $.Values ) }}
+            secretName: {{ $Name }}-sec-gpg
         {{- if .Values.app.cache.redis.enabled }}
         - configMap:
             name: {{ $Name }}-cm-app-php

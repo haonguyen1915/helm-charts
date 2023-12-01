@@ -7,24 +7,22 @@
 
 # -- Install redis as a depending chart
 redisDependencyEnabled: true
-# -- Install mariadb as a depending chart
-mariadbDependencyEnabled: true
-# -- Install mariadb as a depending chart
-postgresqlDependencyEnabled: false
 
-# Configure postgresql as a dependency chart
-#postgresql:
-#  auth:
-#    # -- Configure postgresql auth username
-#    username: CHANGEME
-#    # -- Configure postgresql auth password
-#    password: CHANGEME
-#    # -- Configure postgresql auth database
-#    database: passbolt
 
-global:
-  imageRegistry: ""
-  imagePullSecrets: []
+externalSecrets:
+  create: false
+  vault:
+    server: ""
+    auth:
+      kubernetes:
+        mountPath: ""
+        role: ""
+  env:
+    path: ""
+  gpg:
+    path: ""
+  jwt:
+    path: ""
 
 # Configure redis dependency chart
 redis:
@@ -39,6 +37,8 @@ redis:
 
 ## MariaDB dependency parameters
 
+# -- Install mariadb as a depending chart
+mariadbDependencyEnabled: true
 # Configure mariadb as a dependency chart
 mariadb:
   # -- Configure mariadb architecture
@@ -103,31 +103,22 @@ mariadb:
 
 ## Passbolt container and sidecar parameters
 app:
-  # -- Configure pasbolt deployment init container that waits for database
-  databaseInitContainer:
-    # -- Toggle pasbolt deployment init container that waits for database
-    enabled: true
-  #initImage:
-  #  # -- Configure pasbolt deployment init container image client for database
-  #  client: mariadb
-  #  registry: ""
-  #  # -- Configure pasbolt deployment image repsitory
-  #  repository: mariadb
-  #  # -- Configure pasbolt deployment image pullPolicy
-  #  pullPolicy: IfNotPresent
-  #  # -- Overrides the image tag whose default is the chart appVersion.
-  #  tag: latest
+  initImage:
+    # -- Configure pasbolt deployment init container image client for database
+    client: mariadb
+    # -- Configure pasbolt deployment image repsitory
+    repository: mariadb
+    # -- Configure pasbolt deployment image pullPolicy
+    pullPolicy: IfNotPresent
+    # -- Overrides the image tag whose default is the chart appVersion.
+    tag: latest
   image:
     # -- Configure pasbolt deployment image repsitory
-    registry: ""
     repository: passbolt/passbolt
     # -- Configure pasbolt deployment image pullPolicy
     pullPolicy: IfNotPresent
     # -- Overrides the image tag whose default is the chart appVersion.
-    tag: 4.4.0-1-ce
-  # Allowed options: mariadb, mysql or postgresql
-  database:
-    kind: mariadb
+    tag: 4.1.2-1-ce
   cache:
     # Use CACHE_CAKE_DEFAULT_* variables to configure the connection to redis instance
     # on the passboltEnv configuration section
@@ -141,7 +132,6 @@ app:
         enabled: true
         # -- Configure redis sentinel proxy image
         image:
-          registry: ""
           # -- Configure redis sentinel image repository
           repository: haproxy
           # -- Configure redis sentinel image tag
@@ -171,19 +161,13 @@ gpgPath: /etc/passbolt/gpg
 gpgServerKeyPrivate: ""
 # -- Gpg server public key in base64
 gpgServerKeyPublic: ""
-# -- Name of the existing secret for the GPG server keypair. The secret must contain the `serverkey.asc` and `serverkey_private.asc` keys.
-gpgExistingSecret: ""
 
 # -- Configure passbolt jwt directory
 jwtPath: /etc/passbolt/jwt
 # -- JWT server private key in base64
-jwtServerPrivate: ""
+jwtServerPrivate:
 # -- JWT server public key in base64
-jwtServerPublic: ""
-# -- Forces overwrite JWT keys
-jwtCreateKeysForced: false
-jobCreateJwtKeys:
-  extraPodLabels: {}
+jwtServerPublic:
 
 jobCreateGpgKeys:
   extraPodLabels: {}
@@ -198,26 +182,14 @@ passboltEnv:
     PASSBOLT_SSL_FORCE: true
     # -- Toggle passbolt public registration
     PASSBOLT_REGISTRATION_PUBLIC: true
-    # -- Configure passbolt cake cache server
-    CACHE_CAKE_DEFAULT_SERVER: 127.0.0.1
     # -- Configure passbolt default email service port
     EMAIL_TRANSPORT_DEFAULT_PORT: 587
     # -- Toggle passbolt debug mode
     DEBUG: false
-    # -- Configure email used on gpg key. This is used when automatically creating a new gpg server key and when automatically calculating the fingerprint.
-    PASSBOLT_KEY_EMAIL: passbolt@yourdomain.com
     # -- Toggle passbolt selenium mode
     PASSBOLT_SELENIUM_ACTIVE: false
     # -- Configure passbolt license path
     PASSBOLT_PLUGINS_LICENSE_LICENSE: /etc/passbolt/subscription_key.txt
-    # -- Configure passbolt default email from
-    EMAIL_DEFAULT_FROM: no-reply@passbolt.local
-    # -- Configure passbolt default email from name
-    EMAIL_DEFAULT_FROM_NAME: Passbolt
-    # -- Configure passbolt default email host
-    EMAIL_TRANSPORT_DEFAULT_HOST: 127.0.0.1
-    # -- Configure passbolt default email timeout
-    EMAIL_TRANSPORT_DEFAULT_TIMEOUT: 30
     # -- Toggle passbolt tls
     EMAIL_TRANSPORT_DEFAULT_TLS: true
     # -- Configure passbolt jwt private key path
@@ -284,6 +256,7 @@ livenessProbe:
         value: passbolt.local
   initialDelaySeconds: 20
   periodSeconds: 10
+  timeoutSeconds: 2
 # -- Configure passbolt container RadinessProbe
 readinessProbe:
   # @ignore
@@ -296,6 +269,7 @@ readinessProbe:
     path: /healthcheck/status.json
   initialDelaySeconds: 5
   periodSeconds: 10
+  timeoutSeconds: 2
 
 # Configure network policies to allow ingress access passbolt pods
 # networkPolicy defines which labels are allowed to reach to passbolt
@@ -343,12 +317,6 @@ service:
   # -- Annotations to add to the service
   annotations: {}
 
-tls:
-  # -- Generates a secret with a self-signed cerfificate that is injected on ingress and passbolt container
-  autogenerate: true
-  # -- Name of an existing kubernetes secret that contains a SSL certificate to inject on ingress and passbolt container
-  #existingSecret: ""
-
 ingress:
   # -- Enable passbolt ingress
   enabled: false
@@ -363,10 +331,8 @@ ingress:
           pathType: ImplementationSpecific
   # -- Configure passbolt ingress tls
   tls:
-    # If secretname is not empty, the tls entry will use it, otherwise will
-    # have a default name based on the release
     # @ignored
-    - secretName: "tls"
+    - secretName: tls
       hosts:
         - passbolt.local
 # -- Configure passbolt deployment nodeSelector
