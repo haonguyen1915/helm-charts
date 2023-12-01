@@ -2,11 +2,24 @@
 
 * Step 1: Create a helm chart
 
-    Then example for polylite 
+    Create from scratch
     ```shell
+    # Create a very new chart
     cd ./helm-charts/charts
     helm create passbolt
     ```
+  
+    Create from an existing chart
+* 
+    ```shell
+    cd ./helm-charts/charts
+    # Download the chart
+    helm pull passbolt-repo/https://download.passbolt.com/charts/passbolt
+
+    # Extract the chart and modify it
+    tar -xvf passbolt-0.7.0.tgz
+    ```
+    
 
 * Step 2: Package the helm chart
 
