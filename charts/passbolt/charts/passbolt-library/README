@@ -1,0 +1,8 @@
+# Passbolt helm library chart
+
+This helm chart aims to contain snippets of common used templates for faster development of helm charts.
+There are multiple snippets:
+
+## Usage
+
+TODO

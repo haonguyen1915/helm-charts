@@ -1,0 +1,41 @@
+{{- define "passbolt-library.deployment.tpl" -}}
+apiVersion: apps/v1
+kind: Deployment
+{{ include "passbolt-library.metadata" . }}
+spec:
+{{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+{{- end }}
+{{ include "passbolt-library.selector" . | nindent 2 }}
+  template:
+{{ include "passbolt-library.pod-metadata" . | nindent 4 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "passbolt-library.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+      -
+{{ include "passbolt-library.container.tpl" . | indent 8 }}
+{{ include "passbolt-library.http-probes.tpl" ( list .Values.livenessProbe "liveness" ) | indent 10 }}
+{{ include "passbolt-library.http-probes.tpl" ( list .Values.readinessProbe "readiness" ) | indent 10 }}
+{{ include "passbolt-library.envvar.from" .Values.envFrom | indent 8 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end -}}
+{{- define "passbolt-library.deployment" -}}
+{{- template "passbolt-library.util.merge" (append . "passbolt-library.deployment.tpl") -}}
+{{- end -}}

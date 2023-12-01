@@ -1,0 +1,22 @@
+apiVersion: v2
+appVersion: 4.4.0-1-ce
+dependencies:
+- name: passbolt-library
+  repository: https://download.passbolt.com/charts/passbolt-library
+  version: 0.2.7
+- condition: redisDependencyEnabled
+  name: redis
+  repository: https://charts.bitnami.com/bitnami
+  version: 17.15.2
+- condition: mariadbDependencyEnabled
+  name: mariadb
+  repository: https://charts.bitnami.com/bitnami
+  version: 11.5.7
+- condition: postgresqlDependencyEnabled
+  name: postgresql
+  repository: https://charts.bitnami.com/bitnami
+  version: 13.2.3
+description: Helm chart for passbolt PRO and CE
+name: passbolt
+type: application
+version: 0.7.0
