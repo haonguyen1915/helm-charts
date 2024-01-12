@@ -22,6 +22,9 @@ spec:
       {{- if .name }}
       name: {{ .name }}
       {{- end -}}
+      {{- if .nodePort }}
+      nodePort: {{ .nodePort }}
+      {{- end -}}
     {{ end -}}
   {{- end }}
   selector:
