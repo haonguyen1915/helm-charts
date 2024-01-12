@@ -274,6 +274,7 @@ service:
     #   port: 80 # Port will be exposed by sevice
     #   targetPort: http # Port which is exposed by pod, can be the name of port (if any) or port number, default `port value`
     #   protocol: TCP # Values: "TCP", "UDP", and "SCTP"
+    #   nodePort: 30000 # Port will be exposed by node, only available when `service.type = NodePort`
   extraServices: []
 
 # Ingress config
