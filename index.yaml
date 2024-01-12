@@ -3,7 +3,7 @@ entries:
   passbolt:
   - apiVersion: v2
     appVersion: 4.1.2-1-ce
-    created: "2023-12-01T20:50:12.385124+07:00"
+    created: "2024-01-12T23:34:32.73849+07:00"
     dependencies:
     - name: passbolt-library
       repository: https://download.passbolt.com/charts/passbolt-library
@@ -17,7 +17,7 @@ entries:
       repository: https://charts.bitnami.com/bitnami
       version: 11.5.7
     description: Helm chart for passbolt PRO and CE
-    digest: e70a503dd2a24d4284dbdb33963c1acecd74488c1cf9f6cda5521503a8d972e9
+    digest: fe148591fb806541d0537810f5ecbf3eecaf6016b4e00314c3c585adfdb67245
     name: passbolt
     type: application
     urls:
@@ -25,7 +25,7 @@ entries:
     version: 0.8.0
   - apiVersion: v2
     appVersion: 4.4.0-1-ce
-    created: "2023-12-01T20:50:12.371556+07:00"
+    created: "2024-01-12T23:34:32.722455+07:00"
     dependencies:
     - name: passbolt-library
       repository: https://download.passbolt.com/charts/passbolt-library
@@ -52,7 +52,17 @@ entries:
   polylite:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2023-12-01T20:50:12.386939+07:00"
+    created: "2024-01-12T23:34:32.742147+07:00"
+    description: A Helm chart for Kubernetes
+    digest: 40211dddf4172c9654383247a5880a7c88196210cf3f346a9f45408c64f1ab9d
+    name: polylite
+    type: application
+    urls:
+    - https://haonguyen1915.github.io/helm-charts/polylite-1.2.0.tgz
+    version: 1.2.0
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2024-01-12T23:34:32.740335+07:00"
     description: A Helm chart for Kubernetes
     digest: 62c561cec787178cb6acefb273d2ce5b99cdd29adbaa6610015a974758413e41
     name: polylite
@@ -60,4 +70,4 @@ entries:
     urls:
     - https://haonguyen1915.github.io/helm-charts/polylite-1.1.0.tgz
     version: 1.1.0
-generated: "2023-12-01T20:50:12.352979+07:00"
+generated: "2024-01-12T23:34:32.701057+07:00"
