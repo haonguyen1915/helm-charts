@@ -3,7 +3,7 @@ entries:
   passbolt:
   - apiVersion: v2
     appVersion: 4.1.2-1-ce
-    created: "2024-01-12T23:34:32.73849+07:00"
+    created: "2024-03-19T13:33:12.513302+07:00"
     dependencies:
     - name: passbolt-library
       repository: https://download.passbolt.com/charts/passbolt-library
@@ -25,7 +25,7 @@ entries:
     version: 0.8.0
   - apiVersion: v2
     appVersion: 4.4.0-1-ce
-    created: "2024-01-12T23:34:32.722455+07:00"
+    created: "2024-03-19T13:33:12.506276+07:00"
     dependencies:
     - name: passbolt-library
       repository: https://download.passbolt.com/charts/passbolt-library
@@ -49,10 +49,24 @@ entries:
     urls:
     - https://haonguyen1915.github.io/helm-charts/passbolt-0.7.0.tgz
     version: 0.7.0
+  poly:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2024-03-19T13:33:12.51475+07:00"
+    description: A Helm chart for deploying multi-app
+    digest: 0c3562a6cc0aabbb1b303e530ed04290b654234c28a7397cb1fbefb0b6c69b3d
+    maintainers:
+    - email: trungnam23032001@gmail.com
+      name: ThienNam23
+    name: poly
+    type: application
+    urls:
+    - https://haonguyen1915.github.io/helm-charts/poly-3.0.0-alpha1.tgz
+    version: 3.0.0-alpha1
   polylite:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2024-01-12T23:34:32.742147+07:00"
+    created: "2024-03-19T13:33:12.516097+07:00"
     description: A Helm chart for Kubernetes
     digest: 40211dddf4172c9654383247a5880a7c88196210cf3f346a9f45408c64f1ab9d
     name: polylite
@@ -62,7 +76,7 @@ entries:
     version: 1.2.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2024-01-12T23:34:32.740335+07:00"
+    created: "2024-03-19T13:33:12.515467+07:00"
     description: A Helm chart for Kubernetes
     digest: 62c561cec787178cb6acefb273d2ce5b99cdd29adbaa6610015a974758413e41
     name: polylite
@@ -70,4 +84,4 @@ entries:
     urls:
     - https://haonguyen1915.github.io/helm-charts/polylite-1.1.0.tgz
     version: 1.1.0
-generated: "2024-01-12T23:34:32.701057+07:00"
+generated: "2024-03-19T13:33:12.497335+07:00"

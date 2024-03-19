@@ -38,6 +38,7 @@
     helm repo index helm-charts/ --url https://haonguyen1915.github.io/helm-charts/
     
     # Then the index.yaml file will be updated with the new chart, now we need to push the changes to the repo:
+    cd helm-charts
     git add .
     git commit -m "Add passbolt chart"
     git push origin gh-pages
