@@ -3,7 +3,7 @@ entries:
   passbolt:
   - apiVersion: v2
     appVersion: 4.1.2-1-ce
-    created: "2024-07-31T12:24:00.055956+07:00"
+    created: "2024-08-01T10:31:56.412933+07:00"
     dependencies:
     - name: passbolt-library
       repository: https://download.passbolt.com/charts/passbolt-library
@@ -25,7 +25,7 @@ entries:
     version: 0.8.0
   - apiVersion: v2
     appVersion: 4.4.0-1-ce
-    created: "2024-07-31T12:24:00.045767+07:00"
+    created: "2024-08-01T10:31:56.403247+07:00"
     dependencies:
     - name: passbolt-library
       repository: https://download.passbolt.com/charts/passbolt-library
@@ -52,9 +52,9 @@ entries:
   poly:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2024-07-31T12:24:00.059848+07:00"
+    created: "2024-08-01T10:31:56.417199+07:00"
     description: A Helm chart for deploying multi-app
-    digest: 4da99ec7aabddaee9b54b19056d07b2276fa9de73ae189611bf52f806d2e9683
+    digest: 5030782af2242e4b3233f30d44c9179a4100564dbdfb8a774272c9acb36c1c0a
     maintainers:
     - email: trungnam23032001@gmail.com
       name: ThienNam23
@@ -67,7 +67,7 @@ entries:
     version: 3.0.2
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2024-07-31T12:24:00.058567+07:00"
+    created: "2024-08-01T10:31:56.415996+07:00"
     description: A Helm chart for deploying multi-app
     digest: 94d8d826938d9f6d7a7c933d1034897d3ecc055030ae572f6278106e5f9d0e08
     maintainers:
@@ -82,7 +82,7 @@ entries:
     version: 3.0.1
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2024-07-31T12:24:00.057278+07:00"
+    created: "2024-08-01T10:31:56.414474+07:00"
     description: A Helm chart for deploying multi-app
     digest: d31ba2618f1457a341e6bca8a795c809293142e0651cc89256d1ba53ab0fbede
     maintainers:
@@ -96,7 +96,7 @@ entries:
   polylite:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2024-07-31T12:24:00.06127+07:00"
+    created: "2024-08-01T10:31:56.418889+07:00"
     description: A Helm chart for Kubernetes
     digest: 40211dddf4172c9654383247a5880a7c88196210cf3f346a9f45408c64f1ab9d
     name: polylite
@@ -106,7 +106,7 @@ entries:
     version: 1.2.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2024-07-31T12:24:00.060586+07:00"
+    created: "2024-08-01T10:31:56.418092+07:00"
     description: A Helm chart for Kubernetes
     digest: 62c561cec787178cb6acefb273d2ce5b99cdd29adbaa6610015a974758413e41
     name: polylite
@@ -114,4 +114,4 @@ entries:
     urls:
     - https://haonguyen1915.github.io/helm-charts/polylite-1.1.0.tgz
     version: 1.1.0
-generated: "2024-07-31T12:24:00.032913+07:00"
+generated: "2024-08-01T10:31:56.390014+07:00"
